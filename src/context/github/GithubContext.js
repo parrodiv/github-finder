@@ -14,24 +14,26 @@ export const GithubProvider = ({children}) => {
 
   const [state, dispatch] = useReducer(githubReducer, initialState)
 
-  // Get initial users (testing purposes)
-  const fetchUsers = async () => {
+  // Get search users
+  const searchUsers = async (text) => {
     //set loading to true
     setLoading()
 
-    const response = await fetch(`${GITHUB_URL}/users`, {
+    const response = await fetch(`${GITHUB_URL}/search/users?q=${text}`, {
       headers: {
         Authorization: `token ${GITHUB_TOKEN}`,
       },
     });
 
-    const data = await response.json();
+    const {items} = await response.json();
+    console.log(items);
+    //facciamo destructuring, siccome la risposta sarà un oggetto con tanti parametri, a noi serve solo il parametro "items" che contiene login, id,avatar_url ecc
 
     //dispatch cambia lo state come prima facevano setUsers e setLoading
     //risetta loading to false
     dispatch({
       type: 'GET_USERS',
-      payload: data,
+      payload: items,
     })
   };
 
@@ -44,7 +46,7 @@ export const GithubProvider = ({children}) => {
       value={{
         users: state.users,
         loading: state.loading,
-        fetchUsers
+        searchUsers
       }}>
       {children}
     </GithubContext.Provider>
