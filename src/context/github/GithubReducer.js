@@ -1,7 +1,7 @@
 const githubReducer = (state, action) => {
   switch (action.type) {
     case 'GET_USERS':
-      return{
+      return {
         ...state, //initialState
         //aggiorno l'initialState
         users: action.payload,
