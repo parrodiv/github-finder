@@ -1,13 +1,15 @@
-import UserResults from "../components/users/UserResults"
-import UserSearch from "../components/users/UserSearch"
+import UserResults from '../components/users/UserResults';
+import UserSearch from '../components/users/UserSearch';
+import Alert from '../components/layout/Alert';
 
 function Home() {
   return (
     <>
-     <UserSearch />
-     <UserResults />
+      <Alert />
+      <UserSearch />
+      <UserResults />
     </>
-  )
+  );
 }
 
-export default Home
+export default Home;
