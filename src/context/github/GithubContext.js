@@ -27,7 +27,7 @@ export const GithubProvider = ({children}) => {
 
     const {items} = await response.json();
     console.log(items);
-    //facciamo destructuring, siccome la risposta sarà un oggetto con tanti parametri, a noi serve solo il parametro "items" che contiene login, id,avatar_url ecc
+    //facciamo destructuring, siccome la risposta sarà un oggetto con tanti parametri, a noi serve solo il parametro "items" che contiene un ARRAY di oggetti che contiene login, id,avatar_url ecc
 
     //dispatch cambia lo state come prima facevano setUsers e setLoading
     //risetta loading to false
