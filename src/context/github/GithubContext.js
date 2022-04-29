@@ -10,6 +10,7 @@ export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
     user: {},
+    repos: [],
     loading: false,
   };
 
@@ -28,7 +29,7 @@ export const GithubProvider = ({ children }) => {
 
     const { items } = await response.json();
     console.log(items);
-    //destructuring, siccome la risposta sarà un oggetto con tanti parametri, a noi serve solo il parametro "items" che contiene un ARRAY di oggetti che contiene login, id,avatar_url ecc
+    //destructuring, siccome la risposta sarà un oggetto con tanti parametri, a noi serve solo il parametro "items" che contiene un ARRAY di oggetti che contiene login, id, avatar_url ecc
 
     //dispatch cambia lo state come prima facevano setUsers e setLoading
     //risetta loading to false
@@ -61,6 +62,34 @@ export const GithubProvider = ({ children }) => {
     }
   };
 
+  // Get user repos
+  const getUserRepos = async (login) => {
+    //set loading to true
+    setLoading();
+
+    const params = new URLSearchParams({
+      sort: 'created',
+      per_page: 10
+    })
+
+    const response = await fetch(`${GITHUB_URL}/users/${login}/repos?${params}`, {
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+      },
+    });
+
+    const data = await response.json();
+    console.log(data);
+    //destructuring, siccome la risposta sarà un oggetto con tanti parametri, a noi serve solo il parametro "items" che contiene un ARRAY di oggetti che contiene login, id,avatar_url ecc
+
+    //dispatch cambia lo state come prima facevano setUsers e setLoading
+    //risetta loading to false
+    dispatch({
+      type: 'GET_REPOS',
+      payload: data,
+    });
+  };
+
   //Clear users
   const clearUsers = () => dispatch({ type: 'CLEAR_USERS' });
 
@@ -70,12 +99,14 @@ export const GithubProvider = ({ children }) => {
   return (
     <GithubContext.Provider
       value={{
-        users: state.users,
-        loading: state.loading,
-        user: state.user,
+        users: state.users,  //arr
+        loading: state.loading,  //bool
+        user: state.user,  //obj
+        repos: state.repos, //arr
         searchUsers,
         clearUsers,
-        getUser
+        getUser,
+        getUserRepos
       }}
     >
       {children}

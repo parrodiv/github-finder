@@ -2,11 +2,12 @@ import { FaCodepen, FaStore, FaUserFriends, FaUsers } from 'react-icons/fa';
 import { useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Spinner from '../layout/Spinner';
+import ReposList from '../repos/ReposList';
 import GithubContext from '../../context/github/GithubContext';
 import { useParams } from 'react-router-dom';
 
 function User() {
-  const { user, getUser, loading } = useContext(GithubContext);
+  const { user, getUser, loading, getUserRepos, repos } = useContext(GithubContext);
 
   const params = useParams();
 
@@ -14,7 +15,9 @@ function User() {
     getUser(params.login);
     // <Link to={`/user/${login}`} in UserItem.jsx
     // quindi va ad aggiornare il parametro :login in App.js con il nome utente
-    //cosi avviando questa funzione col parametro si ottiene l'oggetto user da GithubContext che setta il nuovo state
+    //cosi avviando questa funzione col parametro si ottiene l'oggetto user da GithubContext che setta il nuovo state andando a riempire la proprietà user
+    
+    getUserRepos(params.login)
   }, []);
 
   //Descrtucture user object params that I need
@@ -31,6 +34,7 @@ function User() {
     html_url,
     following,
     public_repos,
+    public_gists,
     hireable,
   } = user;
 
@@ -71,13 +75,104 @@ function User() {
               </h1>
               <p>{bio}</p>
               <div className="mt-4 card-actions">
-                <a href={html_url} target="_blank" rel="noreferrer" className='btn btn-outline'>
-                    Visite Profile
+                <a
+                  href={html_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-outline"
+                >
+                  Visite GitHub Profile
                 </a>
+              </div>
+            </div>
+
+            <div className="w-full rounded-lg shadow-2xl bg-base-100 stats">
+              <div className="grid grid-cols-1 md:grid-cols-3">
+                {location && (
+                  <div className="stat">
+                    <div className="stat-title text-md">Location</div>
+                    <div className="text-lg stat-value">{location}</div>
+                  </div>
+                )}
+
+                {blog && (
+                  <div className="stat">
+                    <div className="stat-title text-md">Website</div>
+                    <div className="text-lg stat-value">
+                      <a
+                        href={`https://${blog}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {blog}
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {twitter_username && (
+                  <div className="stat">
+                    <div className="stat-title text-md">Twitter</div>
+                    <div className="text-lg stat-value">
+                      <a
+                        href={`https://twitter.com/${twitter_username}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {twitter_username}
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
+
+        <div className="w-full py-5 mb-6 rounded-lg shadow-2xl bg-base-100 stats">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+            <div className="stat">
+              <div className="stat-figure text-secondary">
+                <FaUsers className="text-3xl md:text-5xl" />
+              </div>
+              <div className="stat-title pr-4">Followers</div>
+              <div className="stat-value pr-4 text-3xl md:text-4xl">
+                {followers}
+              </div>
+            </div>
+
+            <div className="stat">
+              <div className="stat-figure text-secondary">
+                <FaUserFriends className="text-3xl md:text-5xl" />
+              </div>
+              <div className="stat-title pr-5">Following</div>
+              <div className="stat-value pr-5 text-3xl md:text-4xl">
+                {following}
+              </div>
+            </div>
+
+            <div className="stat">
+              <div className="stat-figure text-secondary">
+                <FaCodepen className="text-3xl md:text-5xl" />
+              </div>
+              <div className="stat-title pr-5">Public Repos</div>
+              <div className="stat-value pr-5 text-3xl md:text-4xl">
+                {public_repos}
+              </div>
+            </div>
+
+            <div className="stat">
+              <div className="stat-figure text-secondary">
+                <FaStore className="text-3xl md:text-5xl" />
+              </div>
+              <div className="stat-title pr-5">Gists</div>
+              <div className="stat-value pr-5 text-3xl md:text-4xl">
+                {public_gists}
+              </div>
+            </div>
+          </div>
+        </div>
+        < ReposList repos={repos} />
       </div>
     </>
   );
