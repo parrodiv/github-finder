@@ -2,7 +2,7 @@ import {FaEye, FaInfo, FaLink, FaStar, FaUtensils} from 'react-icons/fa'
 import PropTypes from 'prop-types'
 
 function RepoItem({repo}) {
-  console.log(repo);
+  // console.log(repo);
   //desctructure props that I need from object repo
   const {
     name,

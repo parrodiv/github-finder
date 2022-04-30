@@ -4,21 +4,34 @@ import { Link } from 'react-router-dom';
 import Spinner from '../layout/Spinner';
 import ReposList from '../repos/ReposList';
 import GithubContext from '../../context/github/GithubContext';
+import { getUser, getUserRepos } from '../../context/github/GithubActions';
 import { useParams } from 'react-router-dom';
 
 function User() {
-  const { user, getUser, loading, getUserRepos, repos } = useContext(GithubContext);
+  const { user, loading, repos, dispatch } = useContext(GithubContext);
 
   const params = useParams();
 
   useEffect(() => {
-    getUser(params.login);
-    // <Link to={`/user/${login}`} in UserItem.jsx
-    // quindi va ad aggiornare il parametro :login in App.js con il nome utente
-    //cosi avviando questa funzione col parametro si ottiene l'oggetto user da GithubContext che setta il nuovo state andando a riempire la proprietà user
-    
-    getUserRepos(params.login)
-  }, []);
+    dispatch({ type: 'SET_LOADING' });
+    const getUserData = async () => {
+      const userData = await getUser(params.login);
+      // <Link to={`/user/${login}`} in UserItem.jsx
+      // e quindi va ad aggiornare il parametro :login in App.js con il nome utente
+      //cosi avviando questa funzione col parametro si ottiene l'oggetto user da GithubContext che setta il nuovo state andando a riempire la proprietà user
+      dispatch({
+        type: 'GET_USER',
+        payload: userData, //aggiorna lo state e quindi la proprietà user
+      });
+
+      const userReposData = await getUserRepos(params.login);
+      dispatch({
+        type: 'GET_REPOS',
+        payload: userReposData, //aggiorna lo state e quindi la proprietà repos
+      });
+    };
+    getUserData();
+  }, [dispatch, params.login]); //inseriti come dipendenze, nel momento in cui quei dati vengono modificati le funzioni si avviano oltre che ad avviarsi anche al loading
 
   //Descrtucture user object params that I need
   const {
@@ -172,7 +185,7 @@ function User() {
             </div>
           </div>
         </div>
-        < ReposList repos={repos} />
+        <ReposList repos={repos} />
       </div>
     </>
   );
