@@ -16,28 +16,6 @@ export const GithubProvider = ({ children }) => {
 
   const [state, dispatch] = useReducer(githubReducer, initialState);
 
-  // Get search users
-  const searchUsers = async (text) => {
-    //set loading to true
-    setLoading();
-
-    const response = await fetch(`${GITHUB_URL}/search/users?q=${text}`, {
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-      },
-    });
-
-    const { items } = await response.json();
-    console.log(items);
-    //destructuring, siccome la risposta sarà un oggetto con tanti parametri, a noi serve solo il parametro "items" che contiene un ARRAY di oggetti che contiene login, id, avatar_url ecc
-
-    //dispatch cambia lo state come prima facevano setUsers e setLoading
-    //risetta loading to false
-    dispatch({
-      type: 'GET_USERS',
-      payload: items,
-    });
-  };
 
   // Get single user
   const getUser = async (login) => {
@@ -99,11 +77,8 @@ export const GithubProvider = ({ children }) => {
   return (
     <GithubContext.Provider
       value={{
-        users: state.users,  //arr
-        loading: state.loading,  //bool
-        user: state.user,  //obj
-        repos: state.repos, //arr
-        searchUsers,
+        ...state,
+        dispatch,
         clearUsers,
         getUser,
         getUserRepos
